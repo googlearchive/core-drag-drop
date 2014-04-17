@@ -42,6 +42,14 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       this.avatar.style.display = this.showAvatar ? '' : 'none';
     },
 
+    xChanged: function() {
+      this.avatar.style.left = this.x + 'px';
+    },
+
+    yChanged: function() {
+      this.avatar.style.top = this.y + 'px';
+    },
+
     attached: function() {
       var listen = function(event, handler) {
         this.parentNode.addEventListener(event, this[handler].bind(this));
@@ -49,6 +57,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       listen('trackstart', 'trackStart');
       listen('track', 'track');
       listen('trackend', 'trackEnd');
+      this.parentNode.setAttribute('touch-action', 'none');
     },
 
     trackStart: function(event) {
@@ -56,8 +65,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     },
 
     track: function(event) {
-      this.avatar.style.left = event.pageX + 'px';
-      this.avatar.style.top = event.pageY + 'px';
+      this.x = event.pageX;
+      this.y = event.pageY;
     },
 
     trackEnd: function() {
