@@ -12,12 +12,14 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 <style>
   core-drag-avatar {
     position: fixed;
-    left: 100px;
-    top: 100px;
+    left: 0;
+    top: 0;
     display: block;
     width: 40px;
     height: 40px;
     border: 3px solid orange;
+    pointer-events: none;
+    background-color: whitesmoke;
   }
 </style>
 
@@ -31,6 +33,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 <script>
 
   Polymer('core-drag-drop', {
+    observe: {
+      'x y': 'coordinatesChanged'
+    },
 
     ready: function() {
       this.avatar = document.createElement('core-drag-avatar');
@@ -42,12 +47,11 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       this.avatar.style.display = this.showAvatar ? '' : 'none';
     },
 
-    xChanged: function() {
-      this.avatar.style.left = this.x + 'px';
-    },
-
-    yChanged: function() {
-      this.avatar.style.top = this.y + 'px';
+    coordinatesChanged: function() {
+      var x = this.x - 20, y = this.y - 20;
+      this.avatar.style.transform = this.avatar.style.webkitTransform = 'translate(' + x + 'px, ' + y + 'px)';
+      //this.avatar.style.left = this.x + 'px';
+      //this.avatar.style.top = this.y + 'px';
     },
 
     attached: function() {
@@ -58,19 +62,43 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       listen('track', 'track');
       listen('trackend', 'trackEnd');
       this.parentNode.setAttribute('touch-action', 'none');
+      this.parentNode.style.cssText += ';-webkit-user-select: none; -moz-user-select: none; -ms-user-select: none;';
     },
 
     trackStart: function(event) {
-      this.showAvatar = true;
+      var event = this.fire('drag-start', {
+        target: event.target,
+        avatar: this.avatar
+      });
+      this.showAvatar = event.detail.drag;
     },
 
     track: function(event) {
-      this.x = event.pageX;
-      this.y = event.pageY;
+      if (this.showAvatar) {
+        this.x = event.pageX;
+        this.y = event.pageY;
+        this.fire('drag', {
+          x: this.x,
+          y: this.y,
+          avatar: this.avatar
+        });
+      }
     },
 
     trackEnd: function() {
-      this.showAvatar = false;
+      if (this.showAvatar) {
+        this.showAvatar = false;
+        this.fire('drag-drop', {
+          target: event.relatedTarget,
+          avatar: this.avatar,
+          framed: this.framed(event.relatedTarget)
+        });
+      }
+    },
+
+    framed: function(node) {
+      var local = node.getBoundingClientRect();
+      return {x: this.x - local.left, y: this.y - local.top};
     }
 
   });
