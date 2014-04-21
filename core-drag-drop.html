@@ -48,7 +48,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     },
 
     coordinatesChanged: function() {
-      var x = this.x - 20, y = this.y - 20;
+      var x = this.x - 20 + 64, y = this.y - 20 + 64;
       this.avatar.style.transform = this.avatar.style.webkitTransform = 'translate(' + x + 'px, ' + y + 'px)';
       //this.avatar.style.left = this.x + 'px';
       //this.avatar.style.top = this.y + 'px';
@@ -58,14 +58,18 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       var listen = function(event, handler) {
         this.parentNode.addEventListener(event, this[handler].bind(this));
       }.bind(this);
+      //
       listen('trackstart', 'trackStart');
       listen('track', 'track');
       listen('trackend', 'trackEnd');
-      this.parentNode.setAttribute('touch-action', 'none');
-      this.parentNode.style.cssText += ';-webkit-user-select: none; -moz-user-select: none; -ms-user-select: none;';
+      //
+      var host = this.parentNode.host || this.parentNode;
+      host.setAttribute('touch-action', 'none');
+      host.style.cssText += '; user-select: none; -webkit-user-select: none; -moz-user-select: none; -ms-user-select: none;';
     },
 
     trackStart: function(event) {
+      console.log('[%s]: trackStart', this.localName);
       var event = this.fire('drag-start', {
         target: event.target,
         avatar: this.avatar
@@ -74,6 +78,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     },
 
     track: function(event) {
+      console.log('[%s]: track', this.localName);
       if (this.showAvatar) {
         this.x = event.pageX;
         this.y = event.pageY;
@@ -86,6 +91,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     },
 
     trackEnd: function() {
+      console.log('[%s]: trackEnd', this.localName);
       if (this.showAvatar) {
         this.showAvatar = false;
         this.fire('drag-drop', {
