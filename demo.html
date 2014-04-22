@@ -12,9 +12,11 @@
   <link rel="import" href="core-drag-drop.html">
 
   <style>
+
     html {
       font-family: 'Helvetica Neue', 'Roboto', 'Arial', sans-serif;
     }
+
     body {
       height: 100vh;
       margin: 0;
@@ -22,18 +24,21 @@
       -moz-user-select: none;
       -ms-user-select: none;
     }
+
     .box {
       display: inline-block;
       width: 100px;
       height: 100px;
       margin: 16px;
     }
+
     .dropped {
       position: absolute;
       border: 1px solid black;
       width: 5px;
       height: 5px;
     }
+
   </style>
 
 </head>
@@ -49,6 +54,8 @@
 
     <div class="box" style="background-color: lightgreen;" draggable="false"></div>
 
+    <div id="hello">Hello World</div>
+
   </div>
 
   <br><br><br><br><br><br>
@@ -57,24 +64,29 @@
 
   <script>
     addEventListener('drag-start', function(e) {
-      var color = e.detail.target.style.backgroundColor;
-      e.detail.avatar.style.borderColor = color;
-      e.detail.drag = Boolean(color);
+      var dragInfo = e.detail;
+      // flaw #2: e vs dragInfo.event
+      var color = dragInfo.event.target.style.backgroundColor;
+      dragInfo.avatar.style.cssText = 'border: 3px solid ' + color + '; width: 32px; height: 32px; border-radius: 32px; background-color: whitesmoke';
+      e.detail.avatar.appendChild(document.querySelector('#hello'));
+      dragInfo.drag = function() {};
+      dragInfo.drop = drop;
     });
     //
-    addEventListener('drag-drop', function(e) {
-      var color = e.detail.avatar.style.borderColor;
-      if (color && e.detail.target.id === 'drop') {
-        var f = e.detail.framed;
+    function drop(dragInfo) {
+      var color = dragInfo.avatar.style.borderColor;
+      var dropTarget = dragInfo.event.relatedTarget;
+      if (color && dropTarget.id === 'drop') {
+        var f = dragInfo.framed;
         var d = document.createElement('div');
         d.className = 'dropped';
-        d.style.left = f.x + 'px';
-        d.style.top = f.y + 'px';
+        d.style.left = f.x - 4 + 'px';
+        d.style.top = f.y - 4 + 'px';
         d.style.backgroundColor = color;
-        e.detail.target.appendChild(d);
-        e.detail.target.style.backgroundColor = color;
+        dropTarget.appendChild(d);
+        dropTarget.style.backgroundColor = color;
       }
-    });
+    }
   </script>
 
 </body>

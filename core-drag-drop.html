@@ -15,11 +15,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     left: 0;
     top: 0;
     display: block;
-    width: 40px;
-    height: 40px;
-    border: 3px solid orange;
     pointer-events: none;
-    background-color: whitesmoke;
   }
 </style>
 
@@ -33,25 +29,28 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 <script>
 
   Polymer('core-drag-drop', {
+
     observe: {
       'x y': 'coordinatesChanged'
     },
 
     ready: function() {
-      this.avatar = document.createElement('core-drag-avatar');
-      document.body.appendChild(this.avatar);
-      this.showAvatar = false;
+      if (!this.__proto__.avatar) {
+        this.__proto__.avatar = document.createElement('core-drag-avatar');
+        document.body.appendChild(this.avatar);
+      }
+      this.dragging = false;
     },
 
-    showAvatarChanged: function() {
-      this.avatar.style.display = this.showAvatar ? '' : 'none';
+    draggingChanged: function() {
+      this.avatar.style.display = this.dragging ? '' : 'none';
     },
 
     coordinatesChanged: function() {
-      var x = this.x - 20 + 64, y = this.y - 20 + 64;
-      this.avatar.style.transform = this.avatar.style.webkitTransform = 'translate(' + x + 'px, ' + y + 'px)';
-      //this.avatar.style.left = this.x + 'px';
-      //this.avatar.style.top = this.y + 'px';
+      var x = this.x, y = this.y;
+      this.avatar.style.transform = 
+        this.avatar.style.webkitTransform = 
+          'translate(' + x + 'px, ' + y + 'px)';
     },
 
     attached: function() {
@@ -69,37 +68,36 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     },
 
     trackStart: function(event) {
-      console.log('[%s]: trackStart', this.localName);
-      var event = this.fire('drag-start', {
-        target: event.target,
+      this.avatar.style.cssText = '';
+      this.dragInfo = {
+        event: event,
         avatar: this.avatar
-      });
-      this.showAvatar = event.detail.drag;
+      };
+      this.fire('drag-start', this.dragInfo);
+      // flaw #1: what if user doesn't need `drag()`?
+      this.dragging = Boolean(this.dragInfo.drag);
     },
 
     track: function(event) {
-      console.log('[%s]: track', this.localName);
-      if (this.showAvatar) {
+      if (this.dragging) {
         this.x = event.pageX;
         this.y = event.pageY;
-        this.fire('drag', {
-          x: this.x,
-          y: this.y,
-          avatar: this.avatar
-        });
+        this.dragInfo.event = event;
+        this.dragInfo.p = {x : this.x, y: this.y};
+        this.dragInfo.drag(this.dragInfo);
       }
     },
 
     trackEnd: function() {
-      console.log('[%s]: trackEnd', this.localName);
-      if (this.showAvatar) {
-        this.showAvatar = false;
-        this.fire('drag-drop', {
-          target: event.relatedTarget,
-          avatar: this.avatar,
-          framed: this.framed(event.relatedTarget)
-        });
+      if (this.dragging) {
+        this.dragging = false;
+        if (this.dragInfo.drop) {
+          this.dragInfo.framed = this.framed(event.relatedTarget);
+          this.dragInfo.event = event;
+          this.dragInfo.drop(this.dragInfo);
+        }
       }
+      this.dragInfo = null;
     },
 
     framed: function(node) {
