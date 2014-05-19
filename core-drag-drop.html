@@ -92,10 +92,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       if (this.dragging) {
         this.dragging = false;
         if (this.dragInfo.drop) {
-          // TODO(sorvell): remove when 
-          // https://github.com/Polymer/polymer-gestures/issues/5 
-          // is addressed
-          event.relatedTarget = wrap(event.relatedTarget);
           this.dragInfo.framed = this.framed(event.relatedTarget);
           this.dragInfo.event = event;
           this.dragInfo.drop(this.dragInfo);
