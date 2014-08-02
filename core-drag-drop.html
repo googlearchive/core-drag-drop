@@ -55,7 +55,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
     attached: function() {
       var listen = function(event, handler) {
-        PolymerGestures.addGesture(this.parentNode, event, this[handler].bind(this));
+        Polymer.addEventListener(this.parentNode, event, this[handler].bind(this));
       }.bind(this);
       //
       listen('trackstart', 'trackStart');
