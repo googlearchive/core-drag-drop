@@ -63,7 +63,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       listen('trackend', 'trackEnd');
       //
       var host = this.parentNode.host || this.parentNode;
-      host.setAttribute('touch-action', 'none');
       host.style.cssText += '; user-select: none; -webkit-user-select: none; -moz-user-select: none; -ms-user-select: none;';
     },
 
