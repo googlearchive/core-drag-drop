@@ -64,6 +64,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       listen('trackstart', 'trackStart');
       listen('track', 'track');
       listen('trackend', 'trackEnd');
+      addEventListener('mousemove', this.mouseMove.bind(this));
       //
       var host = this.parentNode.host || this.parentNode;
       host.style.cssText += '; user-select: none; -webkit-user-select: none; -moz-user-select: none; -ms-user-select: none;';
@@ -100,6 +101,12 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         }
       }
       this.dragInfo = null;
+    },
+
+    mouseMove: function (event) {
+      if (this.dragging && this.dragInfo.move) {
+        this.dragInfo.move(this.dragInfo, event);
+      }
     },
 
     framed: function(node) {
