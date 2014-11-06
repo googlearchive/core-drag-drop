@@ -79,9 +79,19 @@
       dragInfo.avatar.style.cssText = 'border: 3px solid ' + color + '; width: 32px; height: 32px; border-radius: 32px; background-color: whitesmoke';
       e.detail.avatar.appendChild(document.querySelector('#hello'));
       dragInfo.drag = function() {};
+      dragInfo.move = move;
       dragInfo.drop = drop;
     });
     //
+    function move(dragInfo, event) {
+      var dropTarget = event.target;
+      if (dropTarget.id === 'drop') {
+        dragInfo.avatar.style.borderWidth = '16px';
+      }
+      else {
+        dragInfo.avatar.style.borderWidth = '';
+      }
+    }
     function drop(dragInfo) {
       var color = dragInfo.avatar.style.borderColor;
       var dropTarget = dragInfo.event.relatedTarget;
