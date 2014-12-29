@@ -76,17 +76,18 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         avatar: this.avatar
       };
       this.fire('drag-start', this.dragInfo);
-      // flaw #1: what if user doesn't need `drag()`?
-      this.dragging = Boolean(this.dragInfo.drag);
+      this.dragging = true;
     },
 
     track: function(event) {
       if (this.dragging) {
         this.x = event.pageX;
         this.y = event.pageY;
-        this.dragInfo.event = event;
-        this.dragInfo.p = {x : this.x, y: this.y};
-        this.dragInfo.drag(this.dragInfo);
+        if(this.dragInfo.drag) {
+          this.dragInfo.event = event;
+          this.dragInfo.p = {x : this.x, y: this.y};
+          this.dragInfo.drag(this.dragInfo);
+        }
       }
     },
 
