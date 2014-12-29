@@ -74,11 +74,11 @@
   <script>
     addEventListener('drag-start', function(e) {
       var dragInfo = e.detail;
-      // flaw #2: e vs dragInfo.event
+      // dragInfo.event - 'trackstart', 'track' or 'trackend' event
+      // e - custom 'drag-start' event
       var color = dragInfo.event.target.style.backgroundColor;
       dragInfo.avatar.style.cssText = 'border: 3px solid ' + color + '; width: 32px; height: 32px; border-radius: 32px; background-color: whitesmoke';
-      e.detail.avatar.appendChild(document.querySelector('#hello'));
-      dragInfo.drag = function() {};
+      dragInfo.avatar.appendChild(document.querySelector('#hello'));
       dragInfo.drop = drop;
     });
     //
