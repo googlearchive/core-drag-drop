@@ -9,16 +9,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
 <link rel="import" href="../polymer/polymer.html">
 
-<style>
-  core-drag-avatar {
-    position: fixed;
-    left: 0;
-    top: 0;
-    display: block;
-    pointer-events: none;
-  }
-</style>
-
 <!--
 @group Polymer Core Elements
 @element core-drag-drop
@@ -26,6 +16,20 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 -->
 
 <polymer-element name="core-drag-drop">
+  <template>
+    <style>
+      core-drag-avatar {
+        position: fixed;
+        left: 0;
+        top: 0;
+        display: block;
+        pointer-events: none;
+      }
+    </style>
+
+    <div id="avatarcontent"></div>
+  </template>
+  
 <script>
 (function() {
   var avatar;
@@ -39,7 +43,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     ready: function() {
       if (!avatar) {
         avatar = document.createElement('core-drag-avatar');
-        document.body.appendChild(avatar);
+        this.$.avatarcontent.appendChild(avatar);
       }
       this.avatar = avatar;
       this.dragging = false;
